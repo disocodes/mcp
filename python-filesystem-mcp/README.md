@@ -1,31 +1,15 @@
-# Claude MCP Server
+# Python Filesystem MCP Server
 
-A Python-based Model Context Protocol (MCP) server implementation that provides filesystem operations through a REST API. This server fully implements the MCP specification and includes additional enhanced features for file management.
+A Python-based Model Context Protocol (MCP) server implementation that provides filesystem operations through a REST API. This server fully implements the MCP specification.
 
 ## Features
 
-### MCP Protocol Implementation
 - Full MCP v1 protocol compliance
-- Context-aware file operations
-- Configurable preferences system
-- Secure file access controls
-
-### Enhanced File Operations
-- Comprehensive file metadata
-- Directory tree visualization
-- Pattern-based file searching
-- File moving and renaming
-- Line-based file editing with diff generation
-- Multiple file operations support
-- Recursive directory operations
-
-### Security Features
-- Path validation and normalization
-- Symlink security checks
+- File and directory context retrieval
+- File creation and modification
+- Path validation and security
 - Configurable allowed paths
 - Read-only mode support
-- File size limits
-- Exclude patterns for sensitive directories
 
 ## Setup
 
@@ -36,48 +20,32 @@ pip install -r requirements.txt
 
 2. Run the server:
 ```bash
-python server.py [allowed_directory] [additional_directories...]
+uvicorn server:app --host 127.0.0.1 --port 8000
 ```
 
-The server will start on `http://localhost:8000`
+The server will start on `http://127.0.0.1:8000`. By default, it will serve files from the current directory.
+
+### Development Mode
+
+For development, you can use uvicorn's auto-reload feature:
+```bash
+uvicorn server:app --reload --host 127.0.0.1 --port 8000
+```
+
+This will automatically restart the server when code changes are detected.
 
 ## API Endpoints
 
 ### MCP Protocol Endpoints
 - `GET /mcp/v1/context/{path}` - Get context for a file or directory
 - `POST /mcp/v1/context/{path}` - Update or create file context
-- `GET /mcp/v1/preferences` - Get current preferences
-- `PUT /mcp/v1/preferences` - Update preferences
 
-### Enhanced File Operations
-- `POST /files/edit` - Edit file with diff generation
-- `POST /files/move` - Move or rename files
-- `GET /files/search` - Search files by pattern
-- `GET /files/tree` - Get directory tree structure
+## Configuration
 
-### Legacy Endpoints
-- `GET /list/{path}` - List directory contents
-- `GET /read/{path}` - Read file contents
-- `POST /write/{path}` - Write file
-- `DELETE /delete/{path}` - Delete file or directory
-- `POST /mkdir/{path}` - Create directory
-
-## Preferences Configuration
-
-The server supports the following preferences:
-```json
-{
-  "max_file_size_mb": 10,
-  "allowed_paths": ["/path/to/allowed/directory"],
-  "read_only": false,
-  "exclude_patterns": ["*.pyc", "__pycache__", ".git"]
-}
-```
-
-### Preferences Options
-- `max_file_size_mb`: Maximum allowed file size in megabytes
+The server supports the following configuration:
 - `allowed_paths`: List of allowed filesystem paths
 - `read_only`: Enable read-only mode
+- `max_file_size_mb`: Maximum allowed file size in megabytes
 - `exclude_patterns`: Patterns to exclude from operations
 
 ## Security Notes
@@ -87,22 +55,8 @@ The server supports the following preferences:
    - Symlinks are checked to prevent access outside allowed paths
    - Parent directory access is controlled
 
-2. Access Control:
-   - Use allowed_paths to restrict filesystem access
-   - Enable read_only mode to prevent modifications
-   - Configure exclude_patterns to protect sensitive files
-
-3. Best Practices:
+2. Best Practices:
    - Run in a controlled environment
-   - Use the preferences system to enforce security policies
-   - Regularly update dependencies for security patches
-
-## Error Handling
-
-The server provides detailed error messages with appropriate HTTP status codes:
-- 400: Bad Request (invalid parameters)
-- 403: Forbidden (access denied)
-- 404: Not Found (file/directory not found)
-- 500: Internal Server Error (unexpected errors)
-
-Each error response includes a detailed message to help diagnose the issue.
+   - Use read-only mode when possible
+   - Configure allowed paths appropriately
+   - Keep dependencies updated

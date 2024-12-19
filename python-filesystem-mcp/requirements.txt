@@ -4,6 +4,3 @@ python-multipart==0.0.6
 modelcontextprotocol==0.1.0
 pydantic==2.5.2
 typing-extensions==4.9.0
-python-dateutil==2.8.2
-aiofiles==23.2.1
-watchfiles==0.21.0
